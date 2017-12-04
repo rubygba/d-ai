@@ -1,0 +1,28 @@
+{
+  "entry": "src/index.js",
+  "theme": {
+    "primary-color": "#ee4b4b"
+  },
+  "env": {
+    "development": {
+      "extraBabelPlugins": [
+        "dva-hmr",
+        "transform-runtime",
+        ["import", {"libraryName": "antd", "style": "css"}]
+      ]
+    },
+    "production": {
+      "extraBabelPlugins": [
+        "transform-runtime",
+        ["import", {"libraryName": "antd", "style": "css"}]
+      ]
+    }
+  },
+  "proxy": {
+    "/api": {
+      "target": "http://172.18.6.42:8080/",
+      "changeOrigin": true,
+      "pathRewrite": {"^/api": "/img-label/user-manage"}
+    }
+  }
+}
