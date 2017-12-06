@@ -20,7 +20,7 @@
   },
   "proxy": {
     "/api": {
-      "target": "http://172.18.6.42:8080/",
+      "target": "http://172.18.6.42:8080",
       "changeOrigin": true,
       "pathRewrite": {"^/api": "/img-label/user-manage"}
     }

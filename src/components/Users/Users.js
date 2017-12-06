@@ -6,11 +6,11 @@ import styles from './Users.css'
 import { PAGE_SIZE } from '../../constants'
 import UserModal from './UserModal'
 
-function Users({ loading, list: dataSource, total, page: current, dispatch }) {
-  function deleteHandler(id) {
+function Users({ loading, list: dataSource, total, page: current, isLogin, dispatch }) {
+  function deleteHandler(userId) {
     dispatch({
-      type: 'users/remove',
-      payload: id
+      type: 'users/del',
+      payload: userId
     })
   }
 
@@ -21,10 +21,10 @@ function Users({ loading, list: dataSource, total, page: current, dispatch }) {
     })
   }
 
-  function editHandler(id, values) {
+  function editHandler(userId, values) {
     dispatch({
-      type: 'users/patch',
-      payload: { id, values },
+      type: 'users/edit',
+      payload: { userId, ...values },
     })
   }
 
@@ -44,39 +44,54 @@ function Users({ loading, list: dataSource, total, page: current, dispatch }) {
     },
     {
       title: '用户名称（备注名）',
-      dataIndex: 'userRealName',
-      key: 'userRealName',
-      render: text => <a href="">{text}</a>,
+      dataIndex: 'userName',
+      key: 'userName',
+      render: (text, record) => <a href="">{text} ({record.userRealName})</a>,
     },
     {
       title: '昨日数量',
-      dataIndex: 'userLblYesterdoday',
-      key: 'userLblYesterdoday',
+      dataIndex: 'userLblSum_pp',
+      key: 'userLblSum_pp',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.userLblSum_p - a.userLblSum_pp - b.userLblSum_p + b.userLblSum_pp,
+      render: (text, record) => (
+        <span>{record.userLblSum_p - text}</span>
+      )
     },
     {
       title: '今日数量',
-      dataIndex: 'userLblToday',
-      key: 'userLblToday',
+      dataIndex: 'userLblSum_p',
+      key: 'userLblSum_p',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.userLblSum - a.userLblSum_p - b.userLblSum + b.userLblSum_p,
+      render: (text, record) => (
+        <span>{record.userLblSum - text}</span>
+      )
     },
     {
       title: '总数',
       dataIndex: 'userLblSum',
       key: 'userLblSum',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.userLblSum - b.userLblSum,
     },
     {
       title: '抽样评估',
-      dataIndex: 'email',
-      key: 'email',
+      dataIndex: 'userChkedSum',
+      key: 'userChkedSum',
+      render: (text, record) => (
+        <span>{record.userChkedPass} / {text}</span>
+      )
     },
     {
       title: 'Operation',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation}>
-          <UserModal record={record} onOk={editHandler.bind(null, record.id)}>
+          <UserModal record={record} onOk={editHandler.bind(null, record.userId)}>
             <a>Edit</a>
           </UserModal>
-          <Popconfirm title="Confirm to delete?" onConfirm={deleteHandler.bind(null, record.id)}>
+          <Popconfirm title="确认删除用户?" onConfirm={deleteHandler.bind(null, record.userId)}>
             <a href="">Delete</a>
           </Popconfirm>
         </span>
@@ -112,9 +127,10 @@ function Users({ loading, list: dataSource, total, page: current, dispatch }) {
 }
 
 function mapStateToProps(state) {
-  const { list, total, page } = state.users
+  const { list, total, page, isLogin } = state.users
   return {
     loading: state.loading.models.users,
+    isLogin,
     list,
     total,
     page,

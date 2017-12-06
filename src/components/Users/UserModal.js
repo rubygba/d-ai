@@ -5,7 +5,6 @@ import styles from './UserModal.css'
 const FormItem = Form.Item
 
 class UserEditModal extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -26,6 +25,7 @@ class UserEditModal extends Component {
     })
   }
 
+  // onOk={createHandler}
   okHandler = () => {
     const { onOk } = this.props
     this.props.form.validateFields((err, values) => {
@@ -39,7 +39,7 @@ class UserEditModal extends Component {
   render() {
     const { children } = this.props
     const { getFieldDecorator } = this.props.form
-    const { name, email, website } = this.props.record
+    const { userName, userRealName, password } = this.props.record
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -51,19 +51,20 @@ class UserEditModal extends Component {
           { children }
         </span>
         <Modal
-          title="User Info"
+          title="用户信息"
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
-          <Form horizontal onSubmit={this.okHandler}>
+          <Form layout="horizontal" onSubmit={this.okHandler}>
             <FormItem
               {...formItemLayout}
               label="用户名"
             >
               {
-                getFieldDecorator('name', {
-                  initialValue: name,
+                getFieldDecorator('userName', {
+                  rules: [{ required: true, message: 'Please input username!' }],
+                  initialValue: userName
                 })(<Input />)
               }
             </FormItem>
@@ -72,8 +73,8 @@ class UserEditModal extends Component {
               label="备注名"
             >
               {
-                getFieldDecorator('email', {
-                  initialValue: email,
+                getFieldDecorator('userRealName', {
+                  initialValue: userRealName,
                 })(<Input />)
               }
             </FormItem>
@@ -82,9 +83,10 @@ class UserEditModal extends Component {
               label="密码"
             >
               {
-                getFieldDecorator('website', {
-                  initialValue: website,
-                })(<Input />)
+                getFieldDecorator('password', {
+                  rules: [{ required: true, message: 'Please input password!' }],
+                  initialValue: password,
+                })(<Input type="password" placeholder="Password" />)
               }
             </FormItem>
           </Form>

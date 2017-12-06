@@ -1,8 +1,22 @@
 import React from 'react'
+import { connect } from 'dva'
 import { Menu, Icon } from 'antd'
 import { Link } from 'dva/router'
 
-function Header({ location }) {
+function Header({ location, isLogin }) {
+  function loginTab() {
+    let flag = isLogin
+    if (flag) {
+      return (
+        <Menu.Item key="/users">
+          <Link to="/users"><Icon type="bars" />Users</Link>
+        </Menu.Item>
+      )
+    } else {
+      return
+    }
+  }
+
   return (
     <Menu
       selectedKeys={[location.pathname]}
@@ -15,9 +29,7 @@ function Header({ location }) {
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />Home</Link>
       </Menu.Item>
-      <Menu.Item key="/users">
-        <Link to="/users"><Icon type="bars" />Users</Link>
-      </Menu.Item>
+      {loginTab()}
     </Menu>
   )
 
@@ -26,4 +38,11 @@ function Header({ location }) {
 // </Menu.Item>
 }
 
-export default Header
+function mapStateToProps(state) {
+  const { isLogin } = state.users
+  return {
+    isLogin
+  }
+}
+
+export default connect(mapStateToProps)(Header)
