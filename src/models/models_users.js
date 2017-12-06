@@ -7,7 +7,8 @@ export default {
     total: null,
     name: null,
     psw: null,
-    isLogin: false
+    isLogin: false,
+    isErr: false
   },
   reducers: {
     // save(state, { payload: { data: list, total, page } }) {
@@ -17,7 +18,7 @@ export default {
       return { ...state, list: userInfos, name, psw, isLogin: true }
     },
     logout(state) {
-      return { ...state, isLogin: false}
+      return { ...state, isLogin: false, isErr: true}
     }
   },
   effects: {
@@ -30,6 +31,7 @@ export default {
       }
       localStorage.ai_usr = userName
       localStorage.ai_psw = password
+      localStorage.ai_time = new Date().getTime()
       yield put({
         type: 'save',
         payload: {
@@ -90,14 +92,18 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      const usr = localStorage.ai_usr || ''
-      const psw = localStorage.ai_psw || ''
-      if (ai_usr && ai_psw) {
-        dispatch({
-          type: 'login',
-          payload: {userName: ai_usr, password: ai_psw}
-        })
-      }
+      return history.listen(({ pathname, search }) => {
+        const usr = localStorage.ai_usr || ''
+        const psw = localStorage.ai_psw || ''
+        const time = localStorage.ai_time || 0
+        let nowTime = new Date().getTime()
+        if (usr && psw && (nowTime - time < 900000) & pathname === '/users') {
+          dispatch({
+            type: 'login',
+            payload: {userName: usr, password: psw}
+          })
+        }
+      })
       // return history.listen(({ pathname, search }) => {
       //   // 根据query生成参数对象（自制）
       //   console.log('listen router search: ', search)

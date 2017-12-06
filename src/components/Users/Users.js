@@ -6,7 +6,13 @@ import styles from './Users.css'
 import { PAGE_SIZE } from '../../constants'
 import UserModal from './UserModal'
 
-function Users({ loading, list: dataSource, total, page: current, isLogin, dispatch }) {
+function Users({ loading, list: dataSource, total, page: current, isErr , dispatch }) {
+  if (isErr) {
+    dispatch(routerRedux.push({
+      pathname: '/'
+    }))
+  }
+
   function deleteHandler(userId) {
     dispatch({
       type: 'users/del',
@@ -127,10 +133,10 @@ function Users({ loading, list: dataSource, total, page: current, isLogin, dispa
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, isLogin } = state.users
+  const { list, total, page, isErr } = state.users
   return {
     loading: state.loading.models.users,
-    isLogin,
+    isErr,
     list,
     total,
     page,
