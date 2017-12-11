@@ -1,4 +1,5 @@
 import * as usersService from '../services/api'
+import { routerRedux } from 'dva/router'
 
 export default {
   namespace: 'users',
@@ -8,25 +9,53 @@ export default {
     name: null,
     psw: null,
     isLogin: false,
-    isErr: false
+    isTry: false
   },
   reducers: {
-    // save(state, { payload: { data: list, total, page } }) {
-    //   return { ...state, list, total, page }
-    // }
     save(state, { payload: { userInfos, name, psw } }) {
       return { ...state, list: userInfos, name, psw, isLogin: true }
     },
+    try(state, {payload: {userName, password}}) {
+      localStorage.ai_usr = userName
+      localStorage.ai_psw = password
+      localStorage.ai_time = new Date().getTime()
+      return { ...state, name: userName, psw: password, isTry: true}
+    },
     logout(state) {
-      return { ...state, isLogin: false, isErr: true}
+      localStorage.ai_usr = ''
+      localStorage.ai_psw = ''
+      return { ...state, isLogin: false, isTry: false}
     }
   },
   effects: {
-    *login({ payload: {userName = 'lucy', password = '123456'} }, { call, put }) {
+    *jump(payload: {}, { call, put, select }) {
+      // const name = yield select(state => state.users.name)
+      // const psw = yield select(state => state.users.psw)
+      const isTry = yield select(state => state.users.isTry)
+
+      if (!isTry) {
+        yield put(routerRedux.push({
+          pathname: '/'
+        }))
+      } else {
+        const name = yield select(state => state.users.name)
+        const psw = yield select(state => state.users.psw)
+
+        yield put({
+          type: 'login',
+          payload: {
+            userName: name,
+            password: psw
+          }
+        })
+      }
+    },
+    *login({ payload: {userName, password} }, { call, put, select }) {
       const { data } = yield call(usersService.login, {userName, password})
       if (data.status != 0) {
         alert('用户名或密码错误')
         yield put({type: 'logout'})
+        yield put({type: 'jump'})
         return
       }
       localStorage.ai_usr = userName
@@ -96,11 +125,15 @@ export default {
         const usr = localStorage.ai_usr || ''
         const psw = localStorage.ai_psw || ''
         const time = localStorage.ai_time || 0
-        let nowTime = new Date().getTime()
+        const nowTime = new Date().getTime()
         if (usr && psw && (nowTime - time < 900000) & pathname === '/users') {
           dispatch({
             type: 'login',
             payload: {userName: usr, password: psw}
+          })
+        } else if (pathname === '/users') {
+          dispatch({
+            type: 'jump'
           })
         }
       })

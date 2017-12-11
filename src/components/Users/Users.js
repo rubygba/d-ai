@@ -7,11 +7,11 @@ import { PAGE_SIZE } from '../../constants'
 import UserModal from './UserModal'
 
 function Users({ loading, list: dataSource, total, page: current, isErr , dispatch }) {
-  if (isErr) {
-    dispatch(routerRedux.push({
-      pathname: '/'
-    }))
-  }
+  // if (isErr) {
+  //   dispatch(routerRedux.push({
+  //     pathname: '/'
+  //   }))
+  // }
 
   function deleteHandler(userId) {
     dispatch({
@@ -45,14 +45,14 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
   const columns = [
     {
       title: '序号',
-      dataIndex: 'no',
+      // dataIndex: 'no',
       key: 'no',
     },
     {
       title: '用户名称（备注名）',
       dataIndex: 'userName',
       key: 'userName',
-      render: (text, record) => <a href="">{text} ({record.userRealName})</a>,
+      render: (text, record) => <a>{text} ({record.userRealName})</a>,
     },
     {
       title: '昨日数量',
@@ -90,15 +90,15 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
       )
     },
     {
-      title: 'Operation',
+      title: '操作',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation}>
           <UserModal record={record} onOk={editHandler.bind(null, record.userId)}>
-            <a>Edit</a>
+            <a>编辑</a>
           </UserModal>
           <Popconfirm title="确认删除用户?" onConfirm={deleteHandler.bind(null, record.userId)}>
-            <a href="">Delete</a>
+            <a href="">删除</a>
           </Popconfirm>
         </span>
       )
@@ -120,16 +120,17 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
           rowKey={record => record.id}
           pagination={false}
         />
-        <Pagination
-          className="ant-table-pagination"
-          total={total}
-          current={current}
-          pageSize={PAGE_SIZE}
-          onChange={pageChangeHandler}
-        />
       </div>
     </div>
   )
+
+//   <Pagination
+//   className="ant-table-pagination"
+//   total={total}
+//   current={current}
+//   pageSize={PAGE_SIZE}
+//   onChange={pageChangeHandler}
+// />
 }
 
 function mapStateToProps(state) {
