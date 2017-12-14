@@ -5,6 +5,7 @@ import { routerRedux } from 'dva/router'
 import styles from './Users.css'
 import { PAGE_SIZE } from '../../constants'
 import UserModal from './UserModal'
+import UserModalEdit from './UserModalEdit'
 
 function Users({ loading, list: dataSource, total, page: current, isErr , dispatch }) {
   // if (isErr) {
@@ -28,6 +29,7 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
   }
 
   function editHandler(userId, values) {
+    console.log('values:', values)
     dispatch({
       type: 'users/edit',
       payload: { userId, ...values },
@@ -94,9 +96,9 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation}>
-          <UserModal record={record} onOk={editHandler.bind(null, record.userId)}>
+          <UserModalEdit record={record} onOk={editHandler.bind(null, record.userId)}>
             <a>编辑</a>
-          </UserModal>
+          </UserModalEdit>
           <Popconfirm title="确认删除用户?" onConfirm={deleteHandler.bind(null, record.userId)}>
             <a href="">删除</a>
           </Popconfirm>
@@ -110,7 +112,7 @@ function Users({ loading, list: dataSource, total, page: current, isErr , dispat
       <div>
         <div className={styles.create}>
           <UserModal record={{}} onOk={createHandler}>
-            <Button type="primary">Create User</Button>
+            <Button type="primary">添加用户</Button>
           </UserModal>
         </div>
         <Table

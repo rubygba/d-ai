@@ -64,10 +64,9 @@ class UserEditModal extends Component {
               {
                 getFieldDecorator('userName', {
                   rules: [
-                    { required: true, message: 'Please input username!' },
                     { pattern:  /^[0-9a-zA-Z_]*$/g, message: '只支持数字、字母和下划线'}
                   ],
-                  initialValue: userName
+                  initialValue: userName ? userName : ''
                 })(<Input placeholder="Username"/>)
               }
             </FormItem>
@@ -77,7 +76,7 @@ class UserEditModal extends Component {
             >
               {
                 getFieldDecorator('userRealName', {
-                  initialValue: userRealName ? userRealName : '',
+                  initialValue: userRealName ? userRealName : ''
                 })(<Input placeholder="Real Name"/>)
               }
             </FormItem>
@@ -87,8 +86,7 @@ class UserEditModal extends Component {
             >
               {
                 getFieldDecorator('password', {
-                  rules: [{ required: true, message: 'Please input password!' }],
-                  initialValue: password,
+                  initialValue: password ? password : '',
                 })(<Input type="password" placeholder="Password" />)
               }
             </FormItem>
