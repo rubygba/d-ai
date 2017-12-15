@@ -3,6 +3,7 @@ html, body, :global(#root) {
   height: 100%;
 }
 
+<<<<<<< HEAD
 :global(body) {
   counter-reset: no;
 }
@@ -11,3 +12,5 @@ html, body, :global(#root) {
   content: counter(no);
   counter-increment: no;
 }
+=======
+>>>>>>> 8c458a35d9eddf3f44e25c69ad8363795c783d66
